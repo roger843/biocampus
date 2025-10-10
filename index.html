@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BioCampus — Prototipo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app" class="app dark">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <circle cx="12" cy="12" r="10" fill="#0f1724"/>
+          <path d="M8 12c1.333-3 5-3 6 0" stroke="#3ddc84" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M8 10c1-2 3-3 5-3" stroke="#60a5fa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div class="brand">
+          <strong>BioCampus</strong>
+          <small>Sistema de Bioseguridad</small>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <button data-route="dashboard" class="menu-item active">🏠 Inicio</button>
+        <button data-route="parqueadero" class="menu-item">🚗 Parqueadero</button>
+        <button data-route="implementos" class="menu-item">🧤 Implementos</button>
+        <button data-route="reportes" class="menu-item">📊 Reportes</button>
+        <button data-route="administracion" class="menu-item">⚙️ Administración</button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <div class="user-mini">
+          <div class="avatar">RB</div>
+          <div>
+            <div class="name">Roger Barros</div>
+            <div class="role">Administrador</div>
+          </div>
+        </div>
+        <button id="logoutBtn" class="btn-ghost">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="search">
+          <input id="search" placeholder="Buscar... (placa, usuario, código)" />
+        </div>
+        <div class="top-actions">
+          <button id="toggleTheme" class="icon-btn">🌙</button>
+        </div>
+      </header>
+
+      <!-- Views -->
+      <section id="views" class="views">
+        <!-- Dashboard -->
+        <div id="dashboard" class="view active">
+          <h1>Hola, Roger 👋</h1>
+          <p class="muted">Resumen general del sistema BioCampus</p>
+
+          <div class="cards">
+            <div class="card">
+              <div class="card-title">Vehículos dentro</div>
+              <div class="card-value" id="vehiculosCount">24</div>
+              <div class="card-sub">50 cupos totales</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Implementos prestados</div>
+              <div class="card-value" id="implementosCount">8</div>
+              <div class="card-sub">Inventario: 86</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Alertas act.</div>
+              <div class="card-value" id="alertasCount">2</div>
+              <div class="card-sub">Incumplimientos bioseguridad</div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Últimos ingresos (parqueadero)</h3>
+                <button class="btn-sm" onclick="sampleRegister()">Registrar ingreso</button>
+              </div>
+              <table class="table">
+                <thead><tr><th>Placa</th><th>Tipo</th><th>Ingreso</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody id="tablaParqueadero">
+                  <!-- rows inserted by JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Préstamos recientes</h3>
+                <button class="btn-sm" onclick="sampleLoan()">Nuevo préstamo</button>
+              </div>
+              <table class="table">
+                <thead><tr><th>Código</th><th>Implemento</th><th>Usuario</th><th>Estado</th></tr></thead>
+                <tbody id="tablaImplementos">
+                  <!-- rows inserted by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parqueadero -->
+        <div id="parqueadero" class="view">
+          <div class="view-header">
+            <h2>Gestión de Parqueadero</h2>
+            <div>
+              <button class="btn" onclick="openIngresoModal()">Registrar ingreso</button>
+              <button class="btn-ghost" onclick="exportTable('parqueadero')">Exportar</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <table class="table full">
+              <thead><tr><th>Placa</th><th>Tipo</th><th>Ingreso</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <tbody id="tablaParqueaderoFull"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Implementos -->
+        <div id="implementos" class="view">
+          <div class="view-header">
+            <h2>Implementos prestados</h2>
+            <div>
+              <button class="btn" onclick="openPrestamoModal()">Nuevo préstamo</button>
+              <button class="btn-ghost" onclick="openAgregarModal()">Agregar implemento</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <table class="table full">
+              <thead><tr><th>Código</th><th>Nombre</th><th>Estado</th><th>Usuario</th><th>Acciones</th></tr></thead>
+              <tbody id="tablaImplementosFull"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Reportes -->
+        <div id="reportes" class="view">
+          <h2>Reportes y Alertas</h2>
+          <div class="panel">
+            <p class="muted">Filtra por fecha o tipo y exporta como PDF.</p>
+            <div class="report-filters">
+              <input type="date" id="fstart" />
+              <input type="date" id="fend" />
+              <select id="ftipo"><option value="">Todos</option><option>Parqueadero</option><option>Implementos</option></select>
+              <button class="btn-sm" onclick="exportTable('report')">Exportar PDF</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Administración -->
+        <div id="administracion" class="view">
+          <h2>Administración</h2>
+          <div class="panel">
+            <h3>Usuarios</h3>
+            <table class="table full">
+              <thead><tr><th>Nombre</th><th>Rol</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <tbody id="tablaUsuarios"></tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <h3>Ajustes</h3>
+            <div class="settings-grid">
+              <label>Color primario: <input type="color" id="primaryColor" value="#3ddc84" onchange="updatePrimary()"/></label>
+              <label>Activo: <input type="checkbox" id="bioActive" checked /></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Login (hidden as modal for the prototype) -->
+        <div id="loginView" class="modal">
+          <div class="modal-card">
+            <h3>Iniciar sesión</h3>
+            <p class="muted">Usa tu correo institucional</p>
+            <input id="loginEmail" placeholder="Correo institucional" />
+            <input id="loginPass" placeholder="Contraseña" type="password" />
+            <select id="loginRole">
+              <option>Estudiante</option><option>Profesor</option><option>Vigilante</option><option>Administrativo</option><option>Administrador</option>
+            </select>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" onclick="login()">Iniciar sesión</button>
+              <button class="btn-ghost" onclick="closeLogin()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
