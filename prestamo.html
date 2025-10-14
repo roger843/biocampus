@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Préstamo de Implementos | BioCampus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark">
+  <main class="main">
+    <header class="topbar">
+      <h1>Formulario de Préstamo de Implementos</h1>
+      <button class="btn-ghost" onclick="window.location.href='index.html'">← Volver</button>
+    </header>
+
+    <section class="panel" style="max-width:600px;margin:auto;margin-top:40px;">
+      <h2>Nuevo préstamo</h2>
+      <form id="prestamoForm" onsubmit="guardarPrestamo(event)">
+        <label>Nombre del usuario:</label>
+        <input type="text" id="usuario" placeholder="Ej: Ana Martínez" required>
+
+        <label>Código del implemento:</label>
+        <input type="text" id="codigo" placeholder="Ej: IMP-010" required>
+
+        <label>Nombre del implemento:</label>
+        <input type="text" id="implemento" placeholder="Ej: Guantes Nitrilo" required>
+
+        <label>Fecha de préstamo:</label>
+        <input type="date" id="fecha" required>
+
+        <button type="submit" class="btn" style="margin-top:10px;">Guardar préstamo</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    function guardarPrestamo(event) {
+      event.preventDefault();
+      const usuario = document.getElementById("usuario").value;
+      const codigo = document.getElementById("codigo").value;
+      const implemento = document.getElementById("implemento").value;
+      const fecha = document.getElementById("fecha").value;
+
+      alert(`✅ Préstamo registrado:\nUsuario: ${usuario}\nImplemento: ${implemento}\nCódigo: ${codigo}\nFecha: ${fecha}`);
+      window.location.href = "index.html"; // vuelve al panel principal
+    }
+  </script>
+</body>
+</html>

@@ -62,7 +62,7 @@ function togglePrestamo(code){
 }
 
 function openIngresoModal() { window.location.href = "formulario.html"; }
-function openPrestamoModal(){ alert('Abrir formulario de préstamo') }
+function openPrestamoModal() { window.location.href = "prestamo.html"; }
 function openAgregarModal(){ alert('Abrir formulario agregar implemento') }
 function sampleRegister(){ state.parqueadero.unshift({ placa:'NEW-'+Math.floor(Math.random()*900), tipo:'Carro', ingreso:'10:20', estado:'Dentro'}); renderTables() }
 function sampleLoan(){ state.implementos.unshift({ codigo:'IMP-'+Math.floor(Math.random()*900), nombre:'Equipo X', estado:'Prestado', usuario:'Usuario Y' }); renderTables() }
