@@ -1,5 +1,15 @@
 // prototipo mínimo de interacción (no persistente)
 const state = {
+// Simulación de usuarios registrados
+let usuariosRegistrados = [
+  { email: 'admin@biocampus.com', password: '1234', rol: 'Administrador', nombre: 'Roger Barros' },
+  { email: 'profesor@biocampus.com', password: 'abcd', rol: 'Profesor', nombre: 'Ana Martínez' },
+  { email: 'estudiante@biocampus.com', password: '0000', rol: 'Estudiante', nombre: 'Carlos Pérez' }
+];
+
+// Usuario actualmente logueado
+let usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo')) || null;
+
   parqueadero: [
     { placa: 'ABC-123', tipo: 'Carro', ingreso: '08:12', estado: 'Dentro' },
     { placa: 'FTW-987', tipo: 'Moto', ingreso: '08:42', estado: 'Dentro' },
@@ -105,7 +115,33 @@ async function exportTable(kind) {
   doc.save(titulo.replace(/\s+/g, "_") + ".pdf");
 }
 
-function login(){ closeLogin(); alert('Sesión iniciada (simulado)') }
+function login() {
+  const email = el('#loginEmail').value.trim();
+  const pass = el('#loginPass').value.trim();
+
+  const user = usuariosRegistrados.find(u => u.email === email && u.password === pass);
+
+  if (user) {
+    usuarioActivo = user;
+    localStorage.setItem('usuarioActivo', JSON.stringify(user));
+    closeLogin();
+    actualizarUsuario();
+    alert(`Bienvenido, ${user.nombre}`);
+  } else {
+    alert('Credenciales incorrectas');
+  }
+}
+function logout() {
+  localStorage.removeItem('usuarioActivo');
+  usuarioActivo = null;
+  alert('Sesión cerrada correctamente');
+  openLogin();
+}
+function actualizarUsuario() {
+  const user = usuarioActivo || { nombre: 'Invitado', rol: 'Desconocido' };
+  document.querySelector('.user-mini .name').textContent = user.nombre;
+  document.querySelector('.user-mini .role').textContent = user.rol;
+}
 function closeLogin(){ el('#loginView').classList.remove('active') }
 function openLogin(){ el('#loginView').classList.add('active') }
 
@@ -146,3 +182,5 @@ if (implementosGuardados) {
 
 // init
 renderTables();
+actualizarUsuario();
+el('#logoutBtn').addEventListener('click', logout);
