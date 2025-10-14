@@ -63,7 +63,7 @@ function togglePrestamo(code){
 
 function openIngresoModal() { window.location.href = "formulario.html"; }
 function openPrestamoModal() { window.location.href = "prestamo.html"; }
-function openAgregarModal(){ alert('Abrir formulario agregar implemento') }
+function openAgregarModal() { window.location.href = "agregar.html"; }
 function sampleRegister(){ state.parqueadero.unshift({ placa:'NEW-'+Math.floor(Math.random()*900), tipo:'Carro', ingreso:'10:20', estado:'Dentro'}); renderTables() }
 function sampleLoan(){ state.implementos.unshift({ codigo:'IMP-'+Math.floor(Math.random()*900), nombre:'Equipo X', estado:'Prestado', usuario:'Usuario Y' }); renderTables() }
 
@@ -76,12 +76,12 @@ async function exportTable(kind) {
 
   if (kind === "report" || kind === "reportes") {
     titulo = "Reporte General de BioCampus";
-    contenido.push("🔹 Vehículos dentro:");
+    contenido.push("Vehículos dentro:");
     state.parqueadero.forEach(p => {
       contenido.push(`  - ${p.placa} (${p.tipo}) — ${p.estado}`);
     });
     contenido.push("");
-    contenido.push("🔹 Implementos prestados:");
+    contenido.push("Implementos prestados:");
     state.implementos.forEach(i => {
       contenido.push(`  - ${i.codigo}: ${i.nombre} (${i.estado}) — ${i.usuario}`);
     });

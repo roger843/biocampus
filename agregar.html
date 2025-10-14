@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Agregar Implemento | BioCampus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark">
+  <main class="main">
+    <header class="topbar">
+      <h1>Agregar Nuevo Implemento</h1>
+      <button class="btn-ghost" onclick="window.location.href='index.html'">← Volver</button>
+    </header>
+
+    <section class="panel" style="max-width:600px;margin:auto;margin-top:40px;">
+      <h2>Registro de Implemento</h2>
+      <form id="agregarForm" onsubmit="guardarImplemento(event)">
+        <label>Código del implemento:</label>
+        <input type="text" id="codigo" placeholder="Ej: IMP-050" required>
+
+        <label>Nombre del implemento:</label>
+        <input type="text" id="nombre" placeholder="Ej: Bata de laboratorio" required>
+
+        <label>Estado:</label>
+        <select id="estado" required>
+          <option value="Disponible">Disponible</option>
+          <option value="Prestado">Prestado</option>
+        </select>
+
+        <label>Usuario (si aplica):</label>
+        <input type="text" id="usuario" placeholder="Ej: Estudiante X">
+
+        <button type="submit" class="btn" style="margin-top:10px;">Guardar implemento</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    function guardarImplemento(event) {
+      event.preventDefault();
+
+      const codigo = document.getElementById("codigo").value;
+      const nombre = document.getElementById("nombre").value;
+      const estado = document.getElementById("estado").value;
+      const usuario = document.getElementById("usuario").value;
+
+      // Cargar implementos actuales o crear arreglo nuevo
+      let implementos = JSON.parse(localStorage.getItem("implementos")) || [];
+
+      // Agregar nuevo implemento
+      implementos.unshift({
+        codigo: codigo,
+        nombre: nombre,
+        estado: estado,
+        usuario: usuario
+      });
+
+      // Guardar en localStorage
+      localStorage.setItem("implementos", JSON.stringify(implementos));
+
+      alert("✅ Implemento agregado con éxito");
+      window.location.href = "index.html"; // volver al panel
+    }
+  </script>
+</body>
+</html>
