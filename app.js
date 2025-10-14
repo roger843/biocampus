@@ -67,7 +67,43 @@ function openAgregarModal(){ alert('Abrir formulario agregar implemento') }
 function sampleRegister(){ state.parqueadero.unshift({ placa:'NEW-'+Math.floor(Math.random()*900), tipo:'Carro', ingreso:'10:20', estado:'Dentro'}); renderTables() }
 function sampleLoan(){ state.implementos.unshift({ codigo:'IMP-'+Math.floor(Math.random()*900), nombre:'Equipo X', estado:'Prestado', usuario:'Usuario Y' }); renderTables() }
 
-function exportTable(kind){ alert('Exportar '+kind+' (simulado)') }
+async function exportTable(kind) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let titulo = "";
+  let contenido = [];
+
+  if (kind === "report" || kind === "reportes") {
+    titulo = "Reporte General de BioCampus";
+    contenido.push("🔹 Vehículos dentro:");
+    state.parqueadero.forEach(p => {
+      contenido.push(`  - ${p.placa} (${p.tipo}) — ${p.estado}`);
+    });
+    contenido.push("");
+    contenido.push("🔹 Implementos prestados:");
+    state.implementos.forEach(i => {
+      contenido.push(`  - ${i.codigo}: ${i.nombre} (${i.estado}) — ${i.usuario}`);
+    });
+  } else {
+    titulo = "Exportación de " + kind;
+    contenido.push("Contenido no definido.");
+  }
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(titulo, 14, 20);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+  let y = 30;
+  contenido.forEach(linea => {
+    doc.text(linea, 14, y);
+    y += 8;
+  });
+
+  doc.save(titulo.replace(/\s+/g, "_") + ".pdf");
+}
 
 function login(){ closeLogin(); alert('Sesión iniciada (simulado)') }
 function closeLogin(){ el('#loginView').classList.remove('active') }
