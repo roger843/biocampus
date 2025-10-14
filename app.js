@@ -133,7 +133,7 @@ function login() {
 function logout() {
   localStorage.removeItem('usuarioActivo');
   usuarioActivo = null;
-  alert('Sesión cerrada correctamente');
+  mostrarMensaje('Sesión cerrada correctamente', 'success');
   openLogin();
 }
 function toggleRegistro(show) {
@@ -172,6 +172,27 @@ function actualizarUsuario() {
   document.querySelector('.user-mini .role').textContent = user.rol;
 }
 function closeLogin(){ el('#loginView').classList.remove('active') }
+function mostrarMensaje(texto, tipo = 'info') {
+  let msg = document.createElement('div');
+  msg.className = `mensaje ${tipo}`;
+  msg.textContent = texto;
+  Object.assign(msg.style, {
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    padding: '10px 16px',
+    background: tipo === 'error' ? '#ef4444' : '#22c55e',
+    color: 'white',
+    borderRadius: '8px',
+    fontSize: '14px',
+    zIndex: 10000,
+    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+    transition: 'opacity .3s'
+  });
+  document.body.appendChild(msg);
+  setTimeout(() => msg.style.opacity = 0, 2500);
+  setTimeout(() => msg.remove(), 3000);
+}
 function openLogin(){ el('#loginView').classList.add('active') }
 
 // navigation
