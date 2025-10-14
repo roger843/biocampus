@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Formulario de Registro | BioCampus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark">
+  <main class="main">
+    <header class="topbar">
+      <h1>Formulario de Registro</h1>
+      <button class="btn-ghost" onclick="window.location.href='index.html'">← Volver</button>
+    </header>
+
+    <section class="panel" style="max-width:600px;margin:auto;margin-top:40px;">
+      <h2>Registrar vehículo o implemento</h2>
+      <form id="registroForm" onsubmit="guardarDatos(event)">
+        <label>Nombre:</label>
+        <input type="text" id="nombre" placeholder="Nombre completo" required>
+
+        <label>Tipo:</label>
+        <select id="tipo" required>
+          <option value="">Seleccionar...</option>
+          <option value="Vehículo">Vehículo</option>
+          <option value="Implemento">Implemento</option>
+        </select>
+
+        <label>Código / Placa:</label>
+        <input type="text" id="codigo" placeholder="Ej: ABC123 o 001-IMP" required>
+
+        <label>Fecha de ingreso:</label>
+        <input type="date" id="fecha" required>
+
+        <button type="submit" class="btn" style="margin-top:10px;">Guardar registro</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    function guardarDatos(event) {
+      event.preventDefault();
+      const nombre = document.getElementById("nombre").value;
+      const tipo = document.getElementById("tipo").value;
+      const codigo = document.getElementById("codigo").value;
+      const fecha = document.getElementById("fecha").value;
+
+      alert(`✅ Registro guardado:\nNombre: ${nombre}\nTipo: ${tipo}\nCódigo: ${codigo}\nFecha: ${fecha}`);
+      window.location.href = "index.html"; // vuelve al inicio
+    }
+  </script>
+</body>
+</html>

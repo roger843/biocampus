@@ -61,7 +61,7 @@ function togglePrestamo(code){
   renderTables();
 }
 
-function openIngresoModal(){ alert('Aquí se abriría el formulario de ingreso (prototipo)') }
+function openIngresoModal() { window.location.href = "formulario.html"; }
 function openPrestamoModal(){ alert('Abrir formulario de préstamo') }
 function openAgregarModal(){ alert('Abrir formulario agregar implemento') }
 function sampleRegister(){ state.parqueadero.unshift({ placa:'NEW-'+Math.floor(Math.random()*900), tipo:'Carro', ingreso:'10:20', estado:'Dentro'}); renderTables() }
