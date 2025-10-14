@@ -37,13 +37,29 @@
   <script>
     function guardarPrestamo(event) {
       event.preventDefault();
+
       const usuario = document.getElementById("usuario").value;
       const codigo = document.getElementById("codigo").value;
       const implemento = document.getElementById("implemento").value;
       const fecha = document.getElementById("fecha").value;
 
-      alert(`✅ Préstamo registrado:\nUsuario: ${usuario}\nImplemento: ${implemento}\nCódigo: ${codigo}\nFecha: ${fecha}`);
-      window.location.href = "index.html"; // vuelve al panel principal
+      // Obtener lista actual de implementos desde localStorage o crear una vacía
+      let implementos = JSON.parse(localStorage.getItem("implementos")) || [];
+
+      // Agregar el nuevo préstamo
+      implementos.unshift({
+        codigo: codigo,
+        nombre: implemento,
+        estado: "Prestado",
+        usuario: usuario,
+        fecha: fecha
+      });
+
+      // Guardar la lista actualizada
+      localStorage.setItem("implementos", JSON.stringify(implementos));
+
+      alert(`✅ Préstamo registrado con éxito`);
+      window.location.href = "index.html"; // volver al inicio
     }
   </script>
 </body>

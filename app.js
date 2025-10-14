@@ -101,5 +101,12 @@ el('#toggleTheme').addEventListener('click', ()=>{
   }
 });
 
+// Cargar implementos guardados desde localStorage
+const implementosGuardados = JSON.parse(localStorage.getItem("implementos"));
+if (implementosGuardados) {
+  state.implementos = implementosGuardados;
+}
+
+
 // init
 renderTables();
