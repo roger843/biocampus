@@ -1,5 +1,3 @@
-// prototipo mínimo de interacción (no persistente)
-const state = {
 // Simulación de usuarios registrados
 let usuariosRegistrados = [
   { email: 'admin@biocampus.com', password: '1234', rol: 'Administrador', nombre: 'Roger Barros' },
@@ -9,7 +7,8 @@ let usuariosRegistrados = [
 
 // Usuario actualmente logueado
 let usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo')) || null;
-
+// prototipo mínimo de interacción (no persistente)
+const state = {
   parqueadero: [
     { placa: 'ABC-123', tipo: 'Carro', ingreso: '08:12', estado: 'Dentro' },
     { placa: 'FTW-987', tipo: 'Moto', ingreso: '08:42', estado: 'Dentro' },
@@ -137,6 +136,36 @@ function logout() {
   alert('Sesión cerrada correctamente');
   openLogin();
 }
+function toggleRegistro(show) {
+  el('#loginForm').style.display = show ? 'none' : 'block';
+  el('#registerForm').style.display = show ? 'block' : 'none';
+  el('#modalTitle').textContent = show ? 'Crear cuenta' : 'Iniciar sesión';
+}
+
+function registrarUsuario() {
+  const nombre = el('#regNombre').value.trim();
+  const email = el('#regEmail').value.trim();
+  const pass = el('#regPass').value.trim();
+  const rol = el('#regRol').value;
+
+  if (!nombre || !email || !pass) {
+    alert('Por favor completa todos los campos');
+    return;
+  }
+
+  // Evita duplicados
+  if (usuariosRegistrados.find(u => u.email === email)) {
+    alert('Ese correo ya está registrado');
+    return;
+  }
+
+  const nuevo = { email, password: pass, rol, nombre };
+  usuariosRegistrados.push(nuevo);
+  localStorage.setItem('usuariosRegistrados', JSON.stringify(usuariosRegistrados));
+
+  alert('Cuenta creada correctamente. Ahora puedes iniciar sesión.');
+  toggleRegistro(false);
+}
 function actualizarUsuario() {
   const user = usuarioActivo || { nombre: 'Invitado', rol: 'Desconocido' };
   document.querySelector('.user-mini .name').textContent = user.nombre;
@@ -179,6 +208,24 @@ if (implementosGuardados) {
   state.implementos = implementosGuardados;
 }
 
+function actualizarUsuario() {
+  const user = usuarioActivo;
+  const avatar = el('.avatar');
+  const name = el('.user-mini .name');
+  const role = el('.user-mini .role');
+
+  if (user) {
+    // Iniciales del nombre (ej. “Roger Barros” → “RB”)
+    const iniciales = user.nombre.split(" ").map(p => p[0].toUpperCase()).join("");
+    avatar.textContent = iniciales;
+    name.textContent = user.nombre;
+    role.textContent = user.rol;
+  } else {
+    avatar.textContent = "??";
+    name.textContent = "Invitado";
+    role.textContent = "Sin rol";
+  }
+}
 
 // init
 renderTables();
