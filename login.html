@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Iniciar sesión - BioCampus</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app dark">
+    <div id="loginView" class="modal active">
+      <div class="modal-card">
+        <h3 id="modalTitle">Iniciar sesión</h3>
+        <p class="muted" id="modalSubtitle">Usa tu correo institucional</p>
+
+        <div id="loginForm">
+          <input id="loginEmail" placeholder="Correo institucional" />
+          <input id="loginPass" placeholder="Contraseña" type="password" />
+          <select id="loginRole">
+            <option>Estudiante</option>
+            <option>Profesor</option>
+            <option>Vigilante</option>
+            <option>Administrativo</option>
+            <option>Administrador</option>
+          </select>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" onclick="login()">Iniciar sesión</button>
+            <button class="btn-ghost" onclick="closeLogin()">Cancelar</button>
+          </div>
+          <p style="margin-top:10px;font-size:14px;text-align:center;">
+            ¿No tienes cuenta? 
+            <a href="#" onclick="toggleRegistro(true)" style="color:#3ddc84;">Crear cuenta</a>
+          </p>
+        </div>
+
+        <div id="registerForm" style="display:none;">
+          <input id="regNombre" placeholder="Nombre completo" />
+          <input id="regEmail" placeholder="Correo institucional" />
+          <input id="regPass" placeholder="Contraseña" type="password" />
+          <select id="regRol">
+            <option>Estudiante</option>
+            <option>Profesor</option>
+            <option>Vigilante</option>
+            <option>Administrativo</option>
+            <option>Administrador</option>
+          </select>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" onclick="registrarUsuario()">Registrar</button>
+            <button class="btn-ghost" onclick="toggleRegistro(false)">Cancelar</button>
+          </div>
+          <p style="margin-top:10px;font-size:14px;text-align:center;">
+            ¿Ya tienes cuenta? 
+            <a href="#" onclick="toggleRegistro(false)" style="color:#3ddc84;">Iniciar sesión</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

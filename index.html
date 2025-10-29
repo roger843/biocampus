@@ -179,57 +179,7 @@
           </div>
         </div>
 
-        <!-- Login / Registro -->
-<div id="loginView" class="modal">
-  <div class="modal-card">
-    <h3 id="modalTitle">Iniciar sesión</h3>
-    <p class="muted" id="modalSubtitle">Usa tu correo institucional</p>
-
-    <!-- Formulario de inicio de sesión -->
-    <div id="loginForm">
-      <input id="loginEmail" placeholder="Correo institucional" />
-      <input id="loginPass" placeholder="Contraseña" type="password" />
-      <select id="loginRole">
-        <option>Estudiante</option>
-        <option>Profesor</option>
-        <option>Vigilante</option>
-        <option>Administrativo</option>
-        <option>Administrador</option>
-      </select>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn" onclick="login()">Iniciar sesión</button>
-        <button class="btn-ghost" onclick="closeLogin()">Cancelar</button>
-      </div>
-      <p style="margin-top:10px;font-size:14px;text-align:center;">
-        ¿No tienes cuenta? 
-        <a href="#" onclick="toggleRegistro(true)" style="color:#3ddc84;">Crear cuenta</a>
-      </p>
-    </div>
-
-    <!-- Formulario de registro -->
-    <div id="registerForm" style="display:none;">
-      <input id="regNombre" placeholder="Nombre completo" />
-      <input id="regEmail" placeholder="Correo institucional" />
-      <input id="regPass" placeholder="Contraseña" type="password" />
-      <select id="regRol">
-        <option>Estudiante</option>
-        <option>Profesor</option>
-        <option>Vigilante</option>
-        <option>Administrativo</option>
-        <option>Administrador</option>
-      </select>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn" onclick="registrarUsuario()">Registrar</button>
-        <button class="btn-ghost" onclick="toggleRegistro(false)">Cancelar</button>
-      </div>
-      <p style="margin-top:10px;font-size:14px;text-align:center;">
-        ¿Ya tienes cuenta? 
-        <a href="#" onclick="toggleRegistro(false)" style="color:#3ddc84;">Iniciar sesión</a>
-      </p>
-    </div>
-  </div>
-</div>
-
+        
 
 
       </section>

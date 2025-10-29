@@ -131,10 +131,10 @@ function login() {
   }
 }
 function logout() {
-  localStorage.removeItem('usuarioActivo');
+  localStorage.clear();
+  sessionStorage.clear();
   usuarioActivo = null;
-  mostrarMensaje('Sesión cerrada correctamente', 'success');
-  openLogin();
+  window.location.href = "login.html";
 }
 function toggleRegistro(show) {
   el('#loginForm').style.display = show ? 'none' : 'block';
