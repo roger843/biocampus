@@ -136,6 +136,7 @@ function logout() {
   usuarioActivo = null;
   window.location.href = "login.html";
 }
+
 function toggleRegistro(show) {
   el('#loginForm').style.display = show ? 'none' : 'block';
   el('#registerForm').style.display = show ? 'block' : 'none';
@@ -245,6 +246,37 @@ function actualizarUsuario() {
     avatar.textContent = "??";
     name.textContent = "Invitado";
     role.textContent = "Sin rol";
+  }
+}
+function toggleRecuperacion(show) {
+  el('#loginForm').style.display = show ? 'none' : 'block';
+  el('#registerForm').style.display = 'none';
+  el('#recuperarForm').style.display = show ? 'block' : 'none';
+}
+
+function cerrarRecuperacion() {
+  el('#recuperarForm').style.display = 'none';
+  el('#loginForm').style.display = 'block';
+}
+async function enviarRecuperacion() {
+  const email = el('#recuperarEmail').value.trim();
+  if (!email) {
+    alert('Por favor ingresa tu correo electrónico');
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:3000/recuperar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+    alert(data.message);
+    cerrarRecuperacion();
+  } catch (err) {
+    alert("Error al conectar con el servidor.");
   }
 }
 
