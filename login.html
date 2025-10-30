@@ -50,9 +50,17 @@
           </div>
 	  <p style="margin-top:10px;font-size:14px;text-align:center;">
     ¿Olvidaste tu contraseña?
-    <a href="#" onclick="mostrarRecuperacion()" style="color:#3ddc84;">Recupérala aquí</a>
+    <a href="#" onclick="toggleRecuperacion(true)" style="color:#3ddc84;">Recupérala aquí</a>
   </p>
-
+<!-- Formulario de recuperación -->
+<div id="recuperarForm" style="display:none;">
+  <p style="text-align:center;">Ingresa tu correo institucional para recuperar tu contraseña</p>
+  <input id="recuperarEmail" placeholder="Correo institucional" type="email" />
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button class="btn" onclick="recuperarContrasena()">Recuperarla aquí</button>
+    <button class="btn-ghost" onclick="toggleRecuperacion(false)">Cancelar</button>
+  </div>
+</div>
   <p style="margin-top:10px;font-size:14px;text-align:center;">
     ¿No tienes cuenta? 
     <a href="#" onclick="toggleRegistro(true)" style="color:#3ddc84;">Crear cuenta</a>
