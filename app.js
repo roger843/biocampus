@@ -1,30 +1,13 @@
-// =========================
 // Simulación de usuarios registrados
-// =========================
 let usuariosRegistrados = [
   { email: 'admin@biocampus.com', password: '1234', rol: 'Administrador', nombre: 'Roger Barros' },
   { email: 'profesor@biocampus.com', password: 'abcd', rol: 'Profesor', nombre: 'Ana Martínez' },
   { email: 'estudiante@biocampus.com', password: '0000', rol: 'Estudiante', nombre: 'Carlos Pérez' }
 ];
 
-// =========================
-// Control de sesión
-// =========================
+// Usuario actualmente logueado
 let usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo')) || null;
-
-function verificarSesion() {
-  const usuario = JSON.parse(localStorage.getItem("usuarioActivo"));
-  if (!usuario) {
-    // Si no hay sesión activa, redirige al login
-    window.location.href = "login.html";
-    return false;
-  }
-  return true;
-}
-
-// =========================
-// Estado inicial (datos simulados)
-// =========================
+// prototipo mínimo de interacción (no persistente)
 const state = {
   parqueadero: [
     { placa: 'ABC-123', tipo: 'Carro', ingreso: '08:12', estado: 'Dentro' },
@@ -42,15 +25,9 @@ const state = {
   ]
 };
 
-// =========================
-// Funciones utilitarias
-// =========================
 function el(q){return document.querySelector(q)}
 function els(q){return document.querySelectorAll(q)}
 
-// =========================
-// Renderizado de tablas
-// =========================
 function renderTables(){
   const tb = el('#tablaParqueadero'), tbf = el('#tablaParqueaderoFull');
   tb.innerHTML=''; tbf.innerHTML='';
@@ -77,9 +54,6 @@ function renderTables(){
   el('#alertasCount').textContent = 2;
 }
 
-// =========================
-// Acciones de datos
-// =========================
 function registrarSalida(placa){
   const idx = state.parqueadero.findIndex(p=>p.placa===placa);
   if(idx>-1) state.parqueadero[idx].estado='Salida';
@@ -96,16 +70,50 @@ function togglePrestamo(code){
   renderTables();
 }
 
-// =========================
-// Navegación
-// =========================
 function openIngresoModal() { window.location.href = "formulario.html"; }
 function openPrestamoModal() { window.location.href = "prestamo.html"; }
 function openAgregarModal() { window.location.href = "agregar.html"; }
+function sampleRegister(){ state.parqueadero.unshift({ placa:'NEW-'+Math.floor(Math.random()*900), tipo:'Carro', ingreso:'10:20', estado:'Dentro'}); renderTables() }
+function sampleLoan(){ state.implementos.unshift({ codigo:'IMP-'+Math.floor(Math.random()*900), nombre:'Equipo X', estado:'Prestado', usuario:'Usuario Y' }); renderTables() }
 
-// =========================
-// Login / Registro
-// =========================
+async function exportTable(kind) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let titulo = "";
+  let contenido = [];
+
+  if (kind === "report" || kind === "reportes") {
+    titulo = "Reporte General de BioCampus";
+    contenido.push("Vehículos dentro:");
+    state.parqueadero.forEach(p => {
+      contenido.push(`  - ${p.placa} (${p.tipo}) — ${p.estado}`);
+    });
+    contenido.push("");
+    contenido.push("Implementos prestados:");
+    state.implementos.forEach(i => {
+      contenido.push(`  - ${i.codigo}: ${i.nombre} (${i.estado}) — ${i.usuario}`);
+    });
+  } else {
+    titulo = "Exportación de " + kind;
+    contenido.push("Contenido no definido.");
+  }
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(titulo, 14, 20);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+  let y = 30;
+  contenido.forEach(linea => {
+    doc.text(linea, 14, y);
+    y += 8;
+  });
+
+  doc.save(titulo.replace(/\s+/g, "_") + ".pdf");
+}
+
 function login() {
   const email = el('#loginEmail').value.trim();
   const pass = el('#loginPass').value.trim();
@@ -115,15 +123,16 @@ function login() {
   if (user) {
     usuarioActivo = user;
     localStorage.setItem('usuarioActivo', JSON.stringify(user));
-    window.location.href = "index.html"; // Redirigir tras login
+    closeLogin();
+    actualizarUsuario();
     alert(`Bienvenido, ${user.nombre}`);
   } else {
     alert('Credenciales incorrectas');
   }
 }
-
 function logout() {
-  localStorage.removeItem('usuarioActivo');
+  localStorage.clear();
+  sessionStorage.clear();
   usuarioActivo = null;
   window.location.href = "login.html";
 }
@@ -145,6 +154,7 @@ function registrarUsuario() {
     return;
   }
 
+  // Evita duplicados
   if (usuariosRegistrados.find(u => u.email === email)) {
     alert('Ese correo ya está registrado');
     return;
@@ -157,13 +167,117 @@ function registrarUsuario() {
   alert('Cuenta creada correctamente. Ahora puedes iniciar sesión.');
   toggleRegistro(false);
 }
+function actualizarUsuario() {
+  const user = usuarioActivo || { nombre: 'Invitado', rol: 'Desconocido' };
+  document.querySelector('.user-mini .name').textContent = user.nombre;
+  document.querySelector('.user-mini .role').textContent = user.rol;
+}
+function closeLogin(){ el('#loginView').classList.remove('active') }
+function mostrarMensaje(texto, tipo = 'info') {
+  let msg = document.createElement('div');
+  msg.className = `mensaje ${tipo}`;
+  msg.textContent = texto;
+  Object.assign(msg.style, {
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    padding: '10px 16px',
+    background: tipo === 'error' ? '#ef4444' : '#22c55e',
+    color: 'white',
+    borderRadius: '8px',
+    fontSize: '14px',
+    zIndex: 10000,
+    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+    transition: 'opacity .3s'
+  });
+  document.body.appendChild(msg);
+  setTimeout(() => msg.style.opacity = 0, 2500);
+  setTimeout(() => msg.remove(), 3000);
+}
+function openLogin(){ el('#loginView').classList.add('active') }
 
-// =========================
-// Recuperar contraseña
-// =========================
+// navigation
+els('.menu-item').forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    els('.menu-item').forEach(x=>x.classList.remove('active'));
+    btn.classList.add('active');
+    const route = btn.getAttribute('data-route');
+    els('.view').forEach(v=>v.classList.remove('active'));
+    el('#'+route).classList.add('active');
+  })
+});
+
+// theme toggle
+el('#toggleTheme').addEventListener('click', ()=>{
+  document.documentElement.classList.toggle('light');
+  document.body.classList.toggle('light');
+  if(document.body.classList.contains('light')) {
+    document.documentElement.style.setProperty('--bg','#f5f7fa');
+    document.documentElement.style.setProperty('--panel','#ffffff');
+    document.documentElement.style.setProperty('--text','#0b1220');
+    document.documentElement.style.setProperty('--muted','#475569');
+  } else {
+    document.documentElement.style.setProperty('--bg','#0b1220');
+    document.documentElement.style.setProperty('--panel','#0f1724');
+    document.documentElement.style.setProperty('--text','#e6eef8');
+    document.documentElement.style.setProperty('--muted','#94a3b8');
+  }
+});
+
+// Cargar implementos guardados desde localStorage
+const implementosGuardados = JSON.parse(localStorage.getItem("implementos"));
+if (implementosGuardados) {
+  state.implementos = implementosGuardados;
+}
+
+function actualizarUsuario() {
+  const user = usuarioActivo;
+  const avatar = el('.avatar');
+  const name = el('.user-mini .name');
+  const role = el('.user-mini .role');
+
+  if (user) {
+    // Iniciales del nombre (ej. “Roger Barros” → “RB”)
+    const iniciales = user.nombre.split(" ").map(p => p[0].toUpperCase()).join("");
+    avatar.textContent = iniciales;
+    name.textContent = user.nombre;
+    role.textContent = user.rol;
+  } else {
+    avatar.textContent = "??";
+    name.textContent = "Invitado";
+    role.textContent = "Sin rol";
+  }
+}
+
 function cerrarRecuperacion() {
   el('#recuperarForm').style.display = 'none';
   el('#loginForm').style.display = 'block';
+}
+async function enviarRecuperacion() {
+  const email = el('#recuperarEmail').value.trim();
+  if (!email) {
+    alert('Por favor ingresa tu correo electrónico');
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:3000/recuperar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+    alert(data.message);
+    cerrarRecuperacion();
+  } catch (err) {
+    alert("Error al conectar con el servidor.");
+  }
+}
+function toggleRecuperacion(mostrar) {
+  document.getElementById("loginForm").style.display = mostrar ? "none" : "block";
+  document.getElementById("registerForm").style.display = "none";
+  document.getElementById("recuperarForm").style.display = mostrar ? "block" : "none";
 }
 
 async function recuperarContrasena() {
@@ -192,43 +306,11 @@ async function recuperarContrasena() {
     alert("⚠️ No se pudo conectar con el servidor. Verifica que esté activo.");
   }
 }
-
-function toggleRecuperacion(mostrar) {
-  document.getElementById("loginForm").style.display = mostrar ? "none" : "block";
-  document.getElementById("registerForm").style.display = "none";
-  document.getElementById("recuperarForm").style.display = mostrar ? "block" : "none";
-}
-
 function mostrarRecuperacion() {
   toggleRecuperacion(true);
 }
 
-// =========================
-// Interfaz usuario
-// =========================
-function actualizarUsuario() {
-  const user = usuarioActivo;
-  const avatar = el('.avatar');
-  const name = el('.user-mini .name');
-  const role = el('.user-mini .role');
-
-  if (user) {
-    const iniciales = user.nombre.split(" ").map(p => p[0].toUpperCase()).join("");
-    avatar.textContent = iniciales;
-    name.textContent = user.nombre;
-    role.textContent = user.rol;
-  } else {
-    avatar.textContent = "??";
-    name.textContent = "Invitado";
-    role.textContent = "Sin rol";
-  }
-}
-
-// =========================
-// Inicialización
-// =========================
-if (verificarSesion()) {
-  renderTables();
-  actualizarUsuario();
-  el('#logoutBtn').addEventListener('click', logout);
-}
+// init
+renderTables();
+actualizarUsuario();
+el('#logoutBtn').addEventListener('click', logout);
