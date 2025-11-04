@@ -2,6 +2,9 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
+const db = require("./db");
+const bcrypt = require("bcrypt");
+
 
 const app = express();
 app.use(express.json());
@@ -23,6 +26,29 @@ app.post("/recuperar", async (req, res) => {
   const { email } = req.body;
 
   if (!email) return res.status(400).json({ message: "Correo requerido" });
+
+app.post("/register", async (req, res) => {
+  const { nombre, email, password, telefono, rol, fecha_nacimiento } = req.body;
+
+  if (!nombre || !email || !password) {
+    return res.status(400).json({ message: "Nombre, email y contraseña son obligatorios" });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  db.query(
+    "INSERT INTO usuarios (nombre, email, password, telefono, rol, fecha_nacimiento) VALUES (?, ?, ?, ?, ?, ?)",
+    [nombre, email, hashedPassword, telefono, rol, fecha_nacimiento],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Error guardando usuario" });
+      }
+      res.json({ message: "Usuario registrado correctamente" });
+    }
+  );
+});
+
 
   // Enlace de recuperación (puede apuntar a tu app en Vercel)
   const linkRecuperacion = `https://biocampus.vercel.app/recuperar.html?email=${encodeURIComponent(email)}`;
