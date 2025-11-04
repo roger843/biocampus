@@ -1,66 +1,49 @@
 import express from "express";
-import crypto from "crypto";
-import bcrypt from "bcryptjs";
-import nodemailer from "nodemailer";
-import User from "../models/User.js";
+import bcrypt from "bcrypt";
+import { db } from "../db.js";
 
 const router = express.Router();
 
-// 📩 Solicitar enlace de recuperación
-router.post("/forgot-password", async (req, res) => {
-  try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+// REGISTER
+router.post("/register", async (req,res)=>{
+    try{
+        const { nombre, email, password, telefono, fecha_nacimiento } = req.body;
 
-    const token = crypto.randomBytes(32).toString("hex");
-    user.resetToken = token;
-    user.resetTokenExpires = Date.now() + 3600000; // 1 hora
-    await user.save();
+        if(!nombre || !email || !password){
+            return res.status(400).json({msg:"Campos obligatorios"});
+        }
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
+        const [userExist] = await db.query("SELECT * FROM usuarios WHERE email = ?", [email]);
+        if(userExist.length > 0) return res.status(400).json({msg:"Email ya registrado"});
 
-    const link = `${process.env.FRONTEND_URL}/reset-password/${token}`;
-    await transporter.sendMail({
-      to: user.email,
-      subject: "Recuperación de contraseña",
-      html: `<p>Haz clic aquí para restablecer tu contraseña:</p>
-             <a href="${link}">${link}</a>`
-    });
+        const hash = await bcrypt.hash(password,10);
 
-    res.json({ message: "Correo enviado para restablecer contraseña" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error al enviar correo" });
-  }
+        await db.query(`
+            INSERT INTO usuarios (nombre,email,password,telefono,fecha_nacimiento) 
+            VALUES (?,?,?,?,?)
+        `,[nombre,email,hash,telefono,fecha_nacimiento]);
+
+        return res.json({msg:"Usuario registrado con éxito"});
+    }catch(e){
+        return res.status(500).json({msg:"Error en servidor",error:e});
+    }
 });
 
-// 🔑 Restablecer contraseña con token
-router.post("/reset-password/:token", async (req, res) => {
-  try {
-    const user = await User.findOne({
-      resetToken: req.params.token,
-      resetTokenExpires: { $gt: Date.now() }
-    });
-    if (!user) return res.status(400).json({ message: "Token inválido o expirado" });
+// LOGIN
+router.post("/login", async (req,res)=>{
+    try{
+        const { email, password } = req.body;
 
-    const hashed = await bcrypt.hash(req.body.password, 10);
-    user.password = hashed;
-    user.resetToken = undefined;
-    user.resetTokenExpires = undefined;
-    await user.save();
+        const [user] = await db.query("SELECT * FROM usuarios WHERE email = ?", [email]);
+        if(user.length === 0) return res.status(400).json({msg:"Usuario no encontrado"});
 
-    res.json({ message: "Contraseña actualizada con éxito" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error al restablecer contraseña" });
-  }
+        const valid = await bcrypt.compare(password,user[0].password);
+        if(!valid) return res.status(400).json({msg:"Contraseña incorrecta"});
+
+        return res.json({msg:"Login correcto", usuario:{id:user[0].id, nombre:user[0].nombre, rol:user[0].rol}});
+    }catch(e){
+        return res.status(500).json({msg:"Error servidor"});
+    }
 });
 
 export default router;

@@ -1,57 +1,16 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crear cuenta - BioCampus</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+async function register(){
+    const nombre = document.getElementById("nombre").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const telefono = document.getElementById("telefono").value;
+    const fecha_nacimiento = document.getElementById("fecha_nacimiento").value;
 
-<div class="container">
-    <h2>Crear cuenta BioCampus</h2>
-
-    <input type="text" id="regNombre" placeholder="Nombre completo">
-    <input type="email" id="regEmail" placeholder="Correo institucional">
-    <input type="password" id="regPass" placeholder="Contraseña">
-    <input type="text" id="regTel" placeholder="Teléfono">
-    <input type="date" id="regFN" placeholder="Fecha de nacimiento">
-
-    <select id="regRol">
-        <option value="Estudiante">Estudiante</option>
-        <option value="Profesor">Profesor</option>
-        <option value="Administrador">Administrador</option>
-    </select>
-
-    <button onclick="registrar()">Crear cuenta</button>
-
-    <p>¿Ya tienes una cuenta? <a href="login.html">Inicia sesión</a></p>
-</div>
-
-<script>
-async function registrar(){
-    const nombre = document.getElementById("regNombre").value.trim();
-    const email = document.getElementById("regEmail").value.trim();
-    const password = document.getElementById("regPass").value.trim();
-    const telefono = document.getElementById("regTel").value.trim();
-    const fecha_nacimiento = document.getElementById("regFN").value.trim();
-    const rol = document.getElementById("regRol").value;
-
-    const response = await fetch("http://localhost:3000/register",{
+    const res = await fetch("http://localhost:3000/auth/register",{
         method:"POST",
-        headers:{ "Content-Type":"application/json"},
-        body: JSON.stringify({nombre,email,password,telefono,rol,fecha_nacimiento})
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({nombre,email,password,telefono,fecha_nacimiento})
     });
 
-    const data = await response.json();
-
-    alert(data.message);
-
-    if(response.ok){
-        location.href="login.html";
-    }
+    const data = await res.json();
+    alert(data.msg);
 }
-</script>
-
-</body>
-</html>
