@@ -1,10 +1,8 @@
-const mysql = require("mysql2");
+import mysql from 'mysql2/promise';
 
-const db = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "", // si tienes password aquí la pones, si no, se deja vacío
-  database: "biocampus"
+export const db = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: '12345',
+    database: 'biocampus'
 });
-
-module.exports = db;
