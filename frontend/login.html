@@ -1,80 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Iniciar sesión - BioCampus</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio de sesión | BioCampus</title>
 </head>
 <body>
-  <div class="app dark">
-    <div id="loginView" class="modal active">
-      <div class="modal-card">
-        <h3 id="modalTitle">Iniciar sesión</h3>
-        <p class="muted" id="modalSubtitle">Usa tu correo institucional</p>
+  <h2>Iniciar sesión</h2>
 
-        <div id="loginForm">
-          <input id="loginEmail" placeholder="Correo institucional" />
-          <input id="loginPass" placeholder="Contraseña" type="password" />
-          <select id="loginRole">
-            <option>Estudiante</option>
-            <option>Profesor</option>
-            <option>Vigilante</option>
-            <option>Administrativo</option>
-            <option>Administrador</option>
-          </select>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn" onclick="login()">Iniciar sesión</button>
-            <button class="btn-ghost" onclick="closeLogin()">Cancelar</button>
-          </div>
-          <p style="margin-top:10px;font-size:14px;text-align:center;">
-            ¿No tienes cuenta? 
-            <a href="#" onclick="toggleRegistro(true)" style="color:#3ddc84;">Crear cuenta</a>
-          </p>
-        </div>
+  <form id="loginForm">
+    <input type="email" name="email" placeholder="Correo electrónico" required>
+    <input type="password" name="password" placeholder="Contraseña" required>
+    <button type="submit">Entrar</button>
+  </form>
 
-        <div id="registerForm" style="display:none;">
-          <input id="regNombre" placeholder="Nombre completo" />
-          <input id="regEmail" placeholder="Correo institucional" />
-          <input id="regPass" placeholder="Contraseña" type="password" />
-          <select id="regRol">
-            <option>Estudiante</option>
-            <option>Profesor</option>
-            <option>Vigilante</option>
-            <option>Administrativo</option>
-            <option>Administrador</option>
-          </select>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn" onclick="registrarUsuario()">Registrar</button>
-            <button class="btn-ghost" onclick="toggleRegistro(false)">Cancelar</button>
-          </div>
-	  <p style="margin-top:10px;font-size:14px;text-align:center;">
-    ¿Olvidaste tu contraseña?
-    <a href="#" onclick="toggleRecuperacion(true)" style="color:#3ddc84;">Recupérala aquí</a>
-  </p>
-<!-- Formulario de recuperación -->
-<div id="recuperarForm" style="display:none;">
-  <p style="text-align:center;">Ingresa tu correo institucional para recuperar tu contraseña</p>
-  <input id="recuperarEmail" placeholder="Correo institucional" type="email" />
-  <div style="display:flex;gap:8px;margin-top:8px">
-    <button class="btn" onclick="recuperarContrasena()">Recuperarla aquí</button>
-    <button class="btn-ghost" onclick="toggleRecuperacion(false)">Cancelar</button>
-  </div>
-</div>
-  <p style="margin-top:10px;font-size:14px;text-align:center;">
-    ¿No tienes cuenta? 
-    <a href="#" onclick="toggleRegistro(true)" style="color:#3ddc84;">Crear cuenta</a>
-  </p>
-</div>
-          <p style="margin-top:10px;font-size:14px;text-align:center;">
-            ¿Ya tienes cuenta? 
-            <a href="#" onclick="toggleRegistro(false)" style="color:#3ddc84;">Iniciar sesión</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <p id="msg"></p>
 
-  <script src="app.js"></script>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = Object.fromEntries(new FormData(e.target));
+
+      try {
+        const res = await fetch("http://localhost:3000/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        document.getElementById("msg").textContent = result.message;
+
+        if (res.ok) {
+          alert("✅ Bienvenido, " + result.user.nombre + "!");
+          // Guarda los datos del usuario si deseas usarlos luego
+          localStorage.setItem("user", JSON.stringify(result.user));
+          window.location.href = "index.html";
+        }
+      } catch (err) {
+        document.getElementById("msg").textContent = "❌ Error de conexión con el servidor.";
+        console.error(err);
+      }
+    });
+  </script>
 </body>
 </html>
