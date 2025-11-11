@@ -1,14 +1,80 @@
-// frontend/js/app.js login
-async function login(){
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Iniciar sesión - BioCampus</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app dark">
+    <div id="loginView" class="modal active">
+      <div class="modal-card">
+        <h3 id="modalTitle">Iniciar sesión</h3>
+        <p class="muted" id="modalSubtitle">Usa tu correo institucional</p>
 
-    const res = await fetch("http://localhost:3000/auth/login",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({email,password})
-    });
+        <div id="loginForm">
+          <input id="loginEmail" placeholder="Correo institucional" />
+          <input id="loginPass" placeholder="Contraseña" type="password" />
+          <select id="loginRole">
+            <option>Estudiante</option>
+            <option>Profesor</option>
+            <option>Vigilante</option>
+            <option>Administrativo</option>
+            <option>Administrador</option>
+          </select>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" onclick="login()">Iniciar sesión</button>
+            <button class="btn-ghost" onclick="closeLogin()">Cancelar</button>
+          </div>
+          <p style="margin-top:10px;font-size:14px;text-align:center;">
+            ¿No tienes cuenta? 
+            <a href="#" onclick="toggleRegistro(true)" style="color:#3ddc84;">Crear cuenta</a>
+          </p>
+        </div>
 
-    const data = await res.json();
-    alert(data.msg);
-}
+        <div id="registerForm" style="display:none;">
+          <input id="regNombre" placeholder="Nombre completo" />
+          <input id="regEmail" placeholder="Correo institucional" />
+          <input id="regPass" placeholder="Contraseña" type="password" />
+          <select id="regRol">
+            <option>Estudiante</option>
+            <option>Profesor</option>
+            <option>Vigilante</option>
+            <option>Administrativo</option>
+            <option>Administrador</option>
+          </select>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" onclick="registrarUsuario()">Registrar</button>
+            <button class="btn-ghost" onclick="toggleRegistro(false)">Cancelar</button>
+          </div>
+	  <p style="margin-top:10px;font-size:14px;text-align:center;">
+    ¿Olvidaste tu contraseña?
+    <a href="#" onclick="toggleRecuperacion(true)" style="color:#3ddc84;">Recupérala aquí</a>
+  </p>
+<!-- Formulario de recuperación -->
+<div id="recuperarForm" style="display:none;">
+  <p style="text-align:center;">Ingresa tu correo institucional para recuperar tu contraseña</p>
+  <input id="recuperarEmail" placeholder="Correo institucional" type="email" />
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button class="btn" onclick="recuperarContrasena()">Recuperarla aquí</button>
+    <button class="btn-ghost" onclick="toggleRecuperacion(false)">Cancelar</button>
+  </div>
+</div>
+  <p style="margin-top:10px;font-size:14px;text-align:center;">
+    ¿No tienes cuenta? 
+    <a href="#" onclick="toggleRegistro(true)" style="color:#3ddc84;">Crear cuenta</a>
+  </p>
+</div>
+          <p style="margin-top:10px;font-size:14px;text-align:center;">
+            ¿Ya tienes cuenta? 
+            <a href="#" onclick="toggleRegistro(false)" style="color:#3ddc84;">Iniciar sesión</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
