@@ -1,46 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio de sesión | BioCampus</title>
+  <title>Inicio de Sesión - BioCampus</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <h2>Iniciar sesión</h2>
 
   <form id="loginForm">
-    <input type="email" name="email" placeholder="Correo electrónico" required>
-    <input type="password" name="password" placeholder="Contraseña" required>
+    <input type="email" id="email" placeholder="Correo electrónico" required>
+    <input type="password" id="password" placeholder="Contraseña" required>
     <button type="submit">Entrar</button>
   </form>
 
-  <p id="msg"></p>
+  <p>¿No tienes cuenta? <a href="register.html">Regístrate</a></p>
 
   <script>
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    const form = document.getElementById("loginForm");
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const data = Object.fromEntries(new FormData(e.target));
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
       try {
         const res = await fetch("http://localhost:3000/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
+          body: JSON.stringify({ email, password }),
         });
 
-        const result = await res.json();
-        document.getElementById("msg").textContent = result.message;
+        const data = await res.json();
+        alert(data.message);
 
         if (res.ok) {
-          alert("✅ Bienvenido, " + result.user.nombre + "!");
-          // Guarda los datos del usuario si deseas usarlos luego
-          localStorage.setItem("user", JSON.stringify(result.user));
-          window.location.href = "index.html";
+          // guardar usuario si deseas mantener sesión
+          localStorage.setItem("usuario", JSON.stringify(data.user));
+          window.location.href = "index.html"; // redirigir al inicio
         }
-      } catch (err) {
-        document.getElementById("msg").textContent = "❌ Error de conexión con el servidor.";
-        console.error(err);
+      } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        alert("Error en el inicio de sesión.");
       }
     });
   </script>

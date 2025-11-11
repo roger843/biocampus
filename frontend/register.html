@@ -1,51 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro | BioCampus</title>
+  <title>Registro - BioCampus</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h2>Registro de usuario</h2>
+  <h2>Crear cuenta</h2>
 
   <form id="registerForm">
-    <input type="text" name="nombre" placeholder="Nombre completo" required>
-    <input type="email" name="email" placeholder="Correo electrónico" required>
-    <input type="password" name="password" placeholder="Contraseña" required>
-    <input type="text" name="telefono" placeholder="Teléfono">
-    <input type="date" name="fecha_nacimiento" placeholder="Fecha de nacimiento">
-    <select name="rol">
-      <option value="usuario">Usuario</option>
+    <input type="text" id="nombre" placeholder="Nombre completo" required>
+    <input type="email" id="email" placeholder="Correo electrónico" required>
+    <input type="password" id="password" placeholder="Contraseña" required>
+    <input type="tel" id="telefono" placeholder="Teléfono (opcional)">
+    <input type="date" id="fecha_nacimiento" placeholder="Fecha de nacimiento">
+    <select id="rol">
+      <option value="usuario" selected>Usuario</option>
       <option value="admin">Administrador</option>
     </select>
-    <button type="submit">Registrarse</button>
+    <button type="submit">Registrarme</button>
   </form>
 
-  <p id="msg"></p>
+  <p>¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
 
   <script>
-    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    const form = document.getElementById("registerForm");
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const data = Object.fromEntries(new FormData(e.target));
+      const nombre = document.getElementById("nombre").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const telefono = document.getElementById("telefono").value;
+      const fecha_nacimiento = document.getElementById("fecha_nacimiento").value;
+      const rol = document.getElementById("rol").value;
 
       try {
         const res = await fetch("http://localhost:3000/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
+          body: JSON.stringify({ nombre, email, password, telefono, fecha_nacimiento, rol }),
         });
 
-        const result = await res.json();
-        document.getElementById("msg").textContent = result.message;
+        const data = await res.json();
+        alert(data.message);
 
         if (res.ok) {
-          alert("✅ Registro exitoso. Ahora puedes iniciar sesión.");
-          window.location.href = "login.html";
+          window.location.href = "login.html"; // redirigir al login
         }
-      } catch (err) {
-        document.getElementById("msg").textContent = "❌ Error de conexión con el servidor.";
-        console.error(err);
+      } catch (error) {
+        console.error("Error al registrar:", error);
+        alert("Error al registrar usuario.");
       }
     });
   </script>
