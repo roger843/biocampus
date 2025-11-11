@@ -62,5 +62,17 @@
       window.location.href = "index.html"; // volver al inicio
     }
   </script>
+<script src="js/app.js"></script>
+
+<script>
+document.getElementById("form-prestamo").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = {
+    usuario: document.getElementById("usuario").value,
+    recurso: document.getElementById("recurso").value
+  };
+  await registrarPrestamo(data);
+});
+</script>
 </body>
 </html>

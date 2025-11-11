@@ -64,5 +64,16 @@
       window.location.href = "index.html"; // volver al panel
     }
   </script>
+<script src="js/app.js"></script>
+<script>
+document.getElementById("form-agregar").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = {
+    nombre: document.getElementById("nombre").value,
+    descripcion: document.getElementById("descripcion").value
+  };
+  await agregarRecurso(data);
+});
+</script>
 </body>
 </html>

@@ -50,5 +50,16 @@
       window.location.href = "index.html"; // vuelve al inicio
     }
   </script>
+<script src="js/app.js"></script>
+<script>
+document.getElementById("formulario-extra").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = {
+    campo1: document.getElementById("campo1").value,
+    campo2: document.getElementById("campo2").value
+  };
+  await enviarFormularioAdicional(data);
+});
+</script>
 </body>
 </html>
