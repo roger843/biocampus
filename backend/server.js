@@ -28,6 +28,8 @@ app.get('/', (req, res) => {
 });
 
 
-app.listen(process.env.PORT || 3000, () =>
-  console.log("Servidor backend listo en puerto", process.env.PORT || 3000)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("🚀 Servidor backend listo en puerto", PORT);
 });
+
