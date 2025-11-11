@@ -1,74 +1,62 @@
-// backend/routes/form.js
 import express from "express";
-import db from "../db.js";
+import mysql from "mysql2/promise";
+import dotenv from "dotenv";
 
+dotenv.config();
 const router = express.Router();
 
-// 🟢 Ruta para el formulario principal (index.html)
+const db = await mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
+
+// Ruta para formulario principal
 router.post("/formulario", async (req, res) => {
   try {
-    const { nombre, correo, asunto, mensaje } = req.body;
-
-    await db.query(
-      "INSERT INTO formularios (nombre, correo, asunto, mensaje) VALUES (?, ?, ?, ?)",
-      [nombre, correo, asunto, mensaje]
-    );
-
-    res.json({ message: "✅ Formulario guardado correctamente." });
-  } catch (error) {
-    console.error("❌ Error en /formulario:", error);
-    res.status(500).json({ message: "Error al guardar el formulario." });
+    const { nombre, correo, mensaje } = req.body;
+    await db.query("INSERT INTO formulario (nombre, correo, mensaje) VALUES (?, ?, ?)", [nombre, correo, mensaje]);
+    res.json({ success: true, message: "Formulario guardado correctamente" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Error al guardar formulario" });
   }
 });
 
-// 🟢 Ruta para agregar recursos (agregar.html)
+// Ruta para agregar
 router.post("/agregar", async (req, res) => {
   try {
-    const { codigo, nombre, descripcion, estado } = req.body;
-
-    await db.query(
-      "INSERT INTO recursos (codigo, nombre, descripcion, estado) VALUES (?, ?, ?, ?)",
-      [codigo, nombre, descripcion, estado]
-    );
-
-    res.json({ message: "✅ Recurso agregado correctamente." });
-  } catch (error) {
-    console.error("❌ Error en /agregar:", error);
-    res.status(500).json({ message: "Error al agregar recurso." });
+    const { nombre, descripcion } = req.body;
+    await db.query("INSERT INTO agregar (nombre, descripcion) VALUES (?, ?)", [nombre, descripcion]);
+    res.json({ success: true, message: "Registro agregado correctamente" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Error al agregar registro" });
   }
 });
 
-// 🟢 Ruta para registrar préstamo (prestamo.html)
+// Ruta para préstamo
 router.post("/prestamo", async (req, res) => {
   try {
-    const { codigoImplemento, usuario, fechaPrestamo, fechaDevolucion } = req.body;
-
-    await db.query(
-      "INSERT INTO prestamos (codigoImplemento, usuario, fechaPrestamo, fechaDevolucion) VALUES (?, ?, ?, ?)",
-      [codigoImplemento, usuario, fechaPrestamo, fechaDevolucion]
-    );
-
-    res.json({ message: "✅ Préstamo registrado correctamente." });
-  } catch (error) {
-    console.error("❌ Error en /prestamo:", error);
-    res.status(500).json({ message: "Error al registrar préstamo." });
+    const { usuario, libro, fecha } = req.body;
+    await db.query("INSERT INTO prestamo (usuario, libro, fecha) VALUES (?, ?, ?)", [usuario, libro, fecha]);
+    res.json({ success: true, message: "Préstamo registrado correctamente" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Error al registrar préstamo" });
   }
 });
 
-// 🟢 Ruta para formulario secundario (formulario.html)
+// Ruta para formulario secundario
 router.post("/formulario-secundario", async (req, res) => {
   try {
-    const { campo1, campo2, campo3 } = req.body;
-
-    await db.query(
-      "INSERT INTO formularios_secundarios (campo1, campo2, campo3) VALUES (?, ?, ?)",
-      [campo1, campo2, campo3]
-    );
-
-    res.json({ message: "✅ Formulario secundario guardado correctamente." });
-  } catch (error) {
-    console.error("❌ Error en /formulario-secundario:", error);
-    res.status(500).json({ message: "Error al guardar formulario secundario." });
+    const { nombre, detalle } = req.body;
+    await db.query("INSERT INTO formulario_secundario (nombre, detalle) VALUES (?, ?)", [nombre, detalle]);
+    res.json({ success: true, message: "Formulario secundario guardado" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Error al guardar formulario secundario" });
   }
 });
 
